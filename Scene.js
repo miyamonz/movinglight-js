@@ -2,15 +2,15 @@ let moment = require('moment');
 let async  = require('async');
 class Scene {
     constructor() {
-        this.startTime;
-        this.elapsedTime;
-        this.sec;
-        this.sceneTime = 5;
+        this.startTime   = 0;
+        this.elapsedTime = 0;
+        this.sec         = 0;
+        this.sceneTime   = 1;
+        this.frame       = 0;
+        this.isRunning   = false;
 
         if(typeof arguments[0] == "function")
             this.func    = arguments[0];
-        this.frame = 0;
-        this.isRunning = false;
     }
     init() {
         let now          = moment();
@@ -18,6 +18,7 @@ class Scene {
         this.elapsedTime = 0;
         this.sec         = 0;
         this.frame       = 0;
+        this.isRunning   = true;
 
     }
 
@@ -31,9 +32,11 @@ class Scene {
         console.log("start!"); 
         this.init();
         async.whilst(
-                () => this.isRunning && this.sec <= this.sceneTime,
+                () => {
+                    return this.isRunning && this.sec <= this.sceneTime
+                },
                 callback => {
-                    this.repeatFunc.call(this);
+                    this.repeatFunc();
                     setTimeout(callback, 10);
                 },
                 (err) => { 

@@ -8,18 +8,22 @@ scenesフォルダに、jsで記述されたスクリプトを書く。
 oscサーバーに発火したいsceneを知らせると、sceneスクリプトに応じて、oscまたはdmx信号を送付して、ムービングライトを制御する。
 
 ## todo
-- [ ] scene function の設計。return するのか、thisに書くのか
-  たぶんreturnが良い...?
-  ムービングライトの数を変える場合はreturnじゃないほうがいい？
-  return {
-    ml: [{x:000, y:000}, {x:000, y:000}, {x:000, y:000} ]
-  }
-  thisに書かせたほうが良さ気。。。
-  どっちでも良い感じにするのがいいかな？
-- [ ] sceneの外部ファイル化
+- [x] scene function の設計。return するのか、thisに書くのか 判断 [2016/10/30 (日) 13:17]
+  - movingライトやdmxを送れるclassをrequireするのが賢いと思う
+- [x] sceneの外部ファイル化 [2016/10/30 (日) 11:38]
   まずは組み込み関数とか抜きで、普通に外部化して読み込もう
-- [ ] oscでファイル名を指定して発火
+- [x] oscでファイル名を指定して発火 [2016/10/30 (日) 11:38]
+- [ ] node-serialportを試す
+- [ ] evalはやめて、特定の関数群をrequire
+  - [ ] ファイルをコンバートするかんじで
 
+- 関数群
+  - sendDmx(ch, val);
+  - MovingObject Class
+    - setColor
+    - setDimmer
+    - setPan, setTilt
+    - 
 
 ## future
 スクリプトの変更の自動検知→発火
