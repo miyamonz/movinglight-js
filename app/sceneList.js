@@ -52,7 +52,8 @@ class SceneList {
             .map((file) => file.match(/^([^.]+).(js)$/)[1]);
         this.names .forEach((name)=>{
             let filepath = '../dst/'+name+".js";
-            delete require.cache[__dirname+"/"+filepath];
+            console.log(require.resolve(filepath));
+            delete require.cache[require.resolve(filepath)];
             let func = require(filepath);
             this.scenes[name] = new Scene(func);
         });
