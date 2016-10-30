@@ -1,29 +1,28 @@
-let list = require('./sceneList.js');
+let SceneList = require('./SceneList.js');
 
 class App {
     constructor() {
-        this.sceneList = list;
+        this.sceneList = new SceneList();
     }
     getNames() {
-        return Object.keys(this.sceneList.getScenes);
+        return this.sceneList.getNames();
     }
     start(name, callback) {
-        if(typeof name !== "string") return;
-        if(getNames().include(name)) 
-            this.sceneList.getScene(name).start();
-        else
-            console.log("存在しないscene名");
+        if(this.sceneList.exists(name))
+            this.sceneList.getScene(name).start(callback);
     }
     stop(name, callback) {
-        if(typeof name !== "string") return;
-        this.sceneList.getScene(name).stop();
+        if(this.sceneList.exists(name))
+            this.sceneList.getScene(name).stop(callback);
     }
     stopAll(callback) {
-        getNames().forEach((name) => {
-            this.sceneList.getScene(name).stop();
+        this.sceneList.getNames().forEach((name) => {
+            this.stop(name);
         })
     }
     load() {
+        this.stopAll();
+        this.sceneList.load(); 
     }
     
 }

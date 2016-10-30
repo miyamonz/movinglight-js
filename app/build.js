@@ -4,7 +4,6 @@ let config = require('../config.json');
 
 module.exports = function build() {
     let sceneNameList = fs.readdirSync("./scene/").filter((file) => /.js$/.test(file));
-    console.log(sceneNameList)
     sceneNameList.forEach((filename)=>{
         let before = fs.readFileSync("./src/before.js").toString();
         let view = {
