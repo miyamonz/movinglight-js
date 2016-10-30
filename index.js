@@ -2,38 +2,22 @@ let osc = require('node-osc');
 let oscServer = new osc.Server("3001", 'localhost');          
 
 let Scene = require('./app/Scene');
-let list = require('./app/sceneList.js');
-
 let App = require('./app/App.js');
 let app = new App(); 
-list.load();
+app.load();
+
 console.log("osc server running at localhost 3001");
+
 oscServer.on("message", function(msg, rinfo){            
-    console.log("message:");                         
-
-    if(msg[0] == "/start") {
-        if(typeof msg[1] === "string" && list.exist(msg[1])) {
-            list.getScene(msg[1]).start(() => {
-                console.log("おわり");
-            });
-
-        }else{
-            console.log(`存在しません: ${msg[1]}`);
-        }
-
-    }
-    if(msg[0] == "/stop") {
-        if(typeof msg[1] === "string" && list.exist(msg[1])) {
-            list.getScene(msg[1]).stop();
-        }else{
-            console.log(`存在しません: ${msg[1]}`);
-        }
-    }
-    if(msg[0] == "/stop/all") {
-        Object.keys(sceneList).forEach((key)=>{
-            sceneList[key].stop();
-        })
-    }
+    console.log("message: ", msg);                         
+    if(msg[0] == "/start")
+        app.start(msg[1]);
+    if(msg[0] == "/stop")
+        app.stop(msg[1]);
+    if(msg[0] == "/stop/all") 
+        app.stopAll();
+    if(msg[0] == "/load") 
+        app.load();
 })
 
 
