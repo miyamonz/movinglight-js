@@ -5,23 +5,25 @@ class App {
         this.sceneList = list;
     }
     getNames() {
-        return Object.keys(this.sceneList);
+        return Object.keys(this.sceneList.getScenes);
     }
     start(name, callback) {
         if(typeof name !== "string") return;
         if(getNames().include(name)) 
-            this.sceneList[name].start();
+            this.sceneList.getScene(name).start();
         else
             console.log("存在しないscene名");
     }
     stop(name, callback) {
         if(typeof name !== "string") return;
-        this.sceneList[name].stop();
+        this.sceneList.getScene(name).stop();
     }
     stopAll(callback) {
-        getNames().forEach((key) => {
-            this.sceneList[key].stop();
+        getNames().forEach((name) => {
+            this.sceneList.getScene(name).stop();
         })
+    }
+    load() {
     }
     
 }
