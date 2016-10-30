@@ -21,7 +21,6 @@ oscServer.on("message", function(msg, rinfo){
 
     }
     if(msg[0] == "/stop") {
-        list.load();
         if(typeof msg[1] === "string" && list.exist(msg[1])) {
             list.getScene(msg[1]).stop();
         }else{
