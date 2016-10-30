@@ -13,9 +13,23 @@ oscサーバーに発火したいsceneを知らせると、sceneスクリプト�
 - [x] sceneの外部ファイル化 [2016/10/30 (日) 11:38]
   まずは組み込み関数とか抜きで、普通に外部化して読み込もう
 - [x] oscでファイル名を指定して発火 [2016/10/30 (日) 11:38]
-- [ ] node-serialportを試す
+- [x] node-serialportを試す →残念ならがbaudRateがだめ [2016/10/30 (日) 16:08]
+
+- [ ] MovingLight class を作る
+  - [ ] init 縦横比
+  - [ ] pointAt 数値とfloat
+  - [ ] setBrightness
+  - [ ] setColor
+  - [ ] setDimmer
+  - [ ] setGobo
+- [ ] 四角形のマップをするclassを作る
+  - [ ] コレ自体は4点を与えたらもう終わり
+  - [ ] 動的に4点を作るのが大事。実際に値を入力して場所を見ながら座標を決める訳だから
+  - [ ] そのシステムはoscで良い？
+
 - [ ] evalはやめて、特定の関数群をrequire
   - [ ] ファイルをコンバートするかんじで
+- [ ] oscのqlcファイルを作る
 
 - 関数群
   - sendDmx(ch, val);
