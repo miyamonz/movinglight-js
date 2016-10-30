@@ -1,9 +1,11 @@
 let osc = require('node-osc');
 let oscServer = new osc.Server("3001", 'localhost');          
 
-let Scene = require('./Scene');
-let list = require('./sceneList.js');
+let Scene = require('./app/Scene');
+let list = require('./app/sceneList.js');
 
+let App = require('./app/App.js');
+let app = new App(); 
 list.load();
 console.log("osc server running at localhost 3001");
 oscServer.on("message", function(msg, rinfo){            

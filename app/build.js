@@ -1,9 +1,9 @@
 let fs = require('fs');
 let Mustache = require('mustache');
-let config = require('./config.json');
+let config = require('../config.json');
 
 module.exports = function build() {
-    let sceneNameList = fs.readdirSync("scene/").filter((file) => /.js$/.test(file));
+    let sceneNameList = fs.readdirSync("./scene/").filter((file) => /.js$/.test(file));
     console.log(sceneNameList)
     sceneNameList.forEach((filename)=>{
         let before = fs.readFileSync("./src/before.js").toString();
@@ -14,6 +14,6 @@ module.exports = function build() {
         };
         let render = fs.readFileSync("./src/render.js").toString();
         let dstText = Mustache.render(render,view);
-        fs.writeFileSync("dst/"+filename, dstText);
+        fs.writeFileSync("./dst/"+filename, dstText);
     });
 }

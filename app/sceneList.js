@@ -12,7 +12,7 @@ let list = {
 
         let sceneNameList = fs.readdirSync("scene/").filter((file) => /.js$/.test(file));
         sceneNameList.forEach((filename)=>{
-            let func = require('./dst/'+filename);
+            let func = require('../dst/'+filename);
             let key = filename.match(/^([^.]+).(js)$/)[1];
             this.sceneList[key] = new Scene(func);
         })
