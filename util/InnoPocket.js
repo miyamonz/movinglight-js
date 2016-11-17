@@ -1,12 +1,15 @@
-let Osc = require('node-osc');
-let async = require('async');
+let Osc        = require('node-osc');
+let async      = require('async');
 let RectMapper = require('../app/homography/RectMapper.js');
+
+const fs   = require('fs')
+const path = require('path')
 function lerp(x0,x1, y0,y1, x) {
     return y0 + (y1-y0) * (x-x0) / (x1-x0);
 }
 class InnoPocket {
     constructor(addr, client) {
-        this.StartAddr  = addr;
+        this.startAddr  = addr;
         this.ch    = 11;
         this._pan   = 0; //0~540
         this._tilt  = 0; //0~180
@@ -21,16 +24,7 @@ class InnoPocket {
         this.dmxPan  = [0,0];
         this.dmxTilt = [0,0];
         this.rectMapper = new RectMapper();
-        // this.isClose = true;
     }
-    // setOscClient(address, port) {
-    //     this._address = address;
-    //     this._port = port;
-    //     this.client = new Osc.Client(address, port); 
-    //     this.isClose = false;
-    //     this.client._sock.on("close", () => this.isClose = true );
-    //     this.isReady  =true;
-    // }
     setOscClient(client) {
         this.client = client;
         this.isReady = true;
@@ -42,23 +36,23 @@ class InnoPocket {
     set tilt(val) { this._tilt = val; }
 
     sendDmx(offset, val, callback) {
-        this.client.send("/dmx/" + (this.StartAddr + offset), val, callback);
+        this.client.send("/dmx/" + (this.startAddr + offset), val, callback);
     }
     sendPanTilt(name, val, _callback) {
         if(name === "pan") {
             var range = 540;
             var adrOffset = 0;
+            this._pan = val
         } else if(name === "tilt") {
             var range = 180;
             var adrOffset = 2;
+            this._tilt = val
         }else { return; }
 
         if(!this.isReady) {
             console.log("not init");
             return;
         }
-        if(val !== undefined) 
-            this._pan = val;
         let bunkatsu = Math.floor(this._pan/range*256*256);
         let ch1 = Math.floor(bunkatsu / 256);
         let ch2 = bunkatsu % 256;
@@ -129,18 +123,36 @@ class InnoPocket {
     }
 
     setAsCorner(index){
-        this.rectMapper.index = index;
-        this.rectMapper.setDmxPan(  this.dmxPan[0]  + this.dmxPan[1]/256); 
-        this.rectMapper.setDmxTilt( this.dmxTilt[0] + this.dmxTilt[1]/256); 
+        this.rectMapper.setDeg(this._pan, this._tilt, index)
     }
     point(x,y) {
-        this.rectMapper.multi([x,y]);
+        let theta = this.rectMapper.calcDeg(x,y);
+        this._pan  = theta.pan;
+        this._tilt = theta.tilt;
     }
     getJson() {
-        return this.rectMapper.getJson();
+        return {
+            address: this.startAddr,
+            point: this.rectMapper.getJson()
+        }
     }
     setJson(json) {
         this.rectMapper.setJson(json);
+    }
+    saveJson(filename = "rect.json"){
+        
+        let json = [];
+        let rectJson;
+        let filePath = path.join(__dirname, "..", filename)
+        try {
+            rectJson = fs.readFileSync(filePath)
+        } catch(e) {
+            rectJson = []
+        }
+        let isExist = rectJson.some( e => e.address === this.startAddr )
+        if(!isExist) json.push(this.getJson())
+        console.log(json)
+        fs.writeFileSync(filePath, JSON.stringify(json, null, "    "))
     }
 }
 
