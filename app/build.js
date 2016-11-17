@@ -8,7 +8,7 @@ module.exports = function build() {
         let before = fs.readFileSync("./src/before.js").toString();
         let view = {
             before: ()=> Mustache.render(before, config), 
-            file: ()=> fs.readFileSync("./scene/scene1.js").toString(),
+            file: ()=> fs.readFileSync(`./scene/${filename}`).toString(),
             port: 3000,
         };
         let render = fs.readFileSync("./src/render.js").toString();

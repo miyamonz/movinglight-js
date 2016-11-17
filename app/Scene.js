@@ -3,7 +3,7 @@ let async  = require('async');
 
 class Scene {
   constructor() {
-    this.interval = 50;
+    this.interval = 10;
     this.startTime;
     this.sceneLength   = moment.duration(1, "s");
     this.frame       = 0;
@@ -17,6 +17,9 @@ class Scene {
   }
   setLength(time) {
     this.sceneLength   = moment.duration(time, "s");
+  }
+  getLength(time) {
+      return this.sceneLength;
   }
 
   //time
@@ -38,7 +41,7 @@ class Scene {
     return this.getElapsedTime().asMilliseconds() / 1000;
   }
   at(time) {
-    time *= 1000; //milisec
+    // time *= 1000; //milisec
     let oldTime = this.getElapsedOld();
     let newTime = this.getElapsedNew();
     return (oldTime < time && time <= newTime); 
@@ -85,7 +88,7 @@ class Scene {
     }
   }
   repeatFunc() {
-    this.func();
+    this.func(this.getElapsedTime().asMilliseconds());
     this.after();
   }
   after(){
