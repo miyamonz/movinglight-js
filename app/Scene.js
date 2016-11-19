@@ -3,7 +3,7 @@ let async  = require('async');
 
 class Scene {
   constructor() {
-    this.interval = 10;
+    this.interval = 25;
     this.startTime;
     this.sceneLength   = moment.duration(1, "s");
     this.frame       = 0;
@@ -84,7 +84,6 @@ class Scene {
     if(this.isRunning) {
       this.isRunning = false;
     }else{
-      console.log("not running"); 
     }
   }
   repeatFunc() {

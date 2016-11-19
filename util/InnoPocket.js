@@ -39,13 +39,14 @@ class InnoPocket {
         this.client.send("/dmx/" + (this.startAddr + offset), val, callback);
     }
     sendPanTilt(name, val, _callback) {
+        var range, adrOffset;
         if(name === "pan") {
-            var range = 540;
-            var adrOffset = 0;
+            range = 540;
+            adrOffset = 0;
             this._pan = val
         } else if(name === "tilt") {
-            var range = 180;
-            var adrOffset = 2;
+            range = 180;
+            adrOffset = 2;
             this._tilt = val
         }else { return; }
 
@@ -53,7 +54,7 @@ class InnoPocket {
             console.log("not init");
             return;
         }
-        let bunkatsu = Math.floor(this._pan/range*256*256);
+        let bunkatsu = Math.floor(val/range*256*256);
         let ch1 = Math.floor(bunkatsu / 256);
         let ch2 = bunkatsu % 256;
         if(ch1 >= 256) {
@@ -126,33 +127,40 @@ class InnoPocket {
         this.rectMapper.setDeg(this._pan, this._tilt, index)
     }
     point(x,y) {
+        if(!this.rectMapper.isReady()) return false;
         let theta = this.rectMapper.calcDeg(x,y);
-        this._pan  = theta.pan;
-        this._tilt = theta.tilt;
+        this.sendPan(theta.pan)
+        this.sendTilt(theta.tilt)
+        return [this._pan, this._tilt]
     }
     getJson() {
         return {
             address: this.startAddr,
-            point: this.rectMapper.getJson()
+            points: this.rectMapper.getJson()
         }
     }
     setJson(json) {
+        //rect.json .points
         this.rectMapper.setJson(json);
     }
     saveJson(filename = "rect.json"){
-        
-        let json = [];
         let rectJson;
         let filePath = path.join(__dirname, "..", filename)
         try {
-            rectJson = fs.readFileSync(filePath)
+            rectJson = JSON.parse(fs.readFileSync(filePath).toString());
         } catch(e) {
+            console.log(e);
             rectJson = []
         }
         let isExist = rectJson.some( e => e.address === this.startAddr )
-        if(!isExist) json.push(this.getJson())
-        console.log(json)
-        fs.writeFileSync(filePath, JSON.stringify(json, null, "    "))
+        if(!isExist) rectJson.push(this.getJson());
+        else {
+            rectJson.forEach((p,i) => {
+                if(p.address === this.startAddr) rectJson[i] = this.getJson();
+            })
+        }
+        fs.writeFileSync(filePath, JSON.stringify(rectJson, null, "    "));
+        return rectJson
     }
 }
 

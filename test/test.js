@@ -45,13 +45,12 @@ describe('RectMapper', function(){
     })
     it('calc', function() {
         let a =rectMapper.calcDeg(0,1);
-        const deg = d => d*180/Math.PI;
         let round = n => Math.round(n*10000) / 10000;
 
         for(let i=0; i<4; i++){
-            var degree = deg(rectMapper.calcDeg(i%2,Math.floor(i/2)).pan)
+            var degree =rectMapper.calcDeg(i%2,Math.floor(i/2)).pan
             assert.equal(pt[i][0],round(degree));
-            var degree = deg(rectMapper.calcDeg(i%2,Math.floor(i/2)).tilt)
+            var degree =rectMapper.calcDeg(i%2,Math.floor(i/2)).tilt
             assert.equal(pt[i][1],round(degree));
         }
     })
