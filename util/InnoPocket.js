@@ -127,6 +127,10 @@ class InnoPocket {
         this.rectMapper.setDeg(this._pan, this._tilt, index)
     }
     point(x,y) {
+        if(typeof x !== "number"){
+            y = x[1]
+            x = x[0]
+        }
         if(!this.rectMapper.isReady()) return false;
         let theta = this.rectMapper.calcDeg(x,y);
         this.sendPan(theta.pan)

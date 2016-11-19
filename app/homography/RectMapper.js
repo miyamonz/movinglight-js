@@ -24,10 +24,10 @@ class RectMapper {
   }
   calcDeg(x,y) {
       const getLinearVec = (p0,p1,t) => {
-          const phi0 = p0.pan ;
-          const the0 = p0.tilt;
-          const phi1 = p1.pan ;
-          const the1 = p1.tilt;
+          const the0 = p0.pan ;
+          const phi0 = p0.tilt;
+          const the1 = p1.pan ;
+          const phi1 = p1.tilt;
           const cos = th => Math.cos(th);
           const sin = th => Math.sin(th);
           let v = $V([
@@ -42,16 +42,21 @@ class RectMapper {
           ]).x(t));
           v.toUnitVector();
           let phi   = Math.asin(v.e(3));
-          phi = Math.PI - phi;
-          if(phi < Math.min(phi0,phi1) || phi > Math.max(phi0,phi1)) phi = Math.PI - phi;
-          let theta = Math.asin(v.e(2)/cos(phi));
-          // if(theta < Math.min(the0,the1) || theta > Math.max(the0,the1)) theta = Math.PI - theta;
-          // theta = Math.PI - theta;
+          // let theta = Math.asin(v.e(2)/cos(phi));
+          
+          let theta;
+          if(v.e(1) == 0) theta = Math.PI/2;
+          else theta = Math.atan(v.e(2)/v.e(1));
+          if(theta <= 0) theta += Math.PI;
+
+            // let theta = Math.asin(v.e(3));
+            // let phi = Math.asin(v.e(2)/cos(theta));
+
           let deg = (t) => lerp(0,Math.PI, 0, 180, t);
-          console.log("phi",deg(phi0), deg(phi),   deg(phi1));
-          console.log("the",deg(the0), deg(theta), deg(the1));
-          console.log("t",t)
-          return {pan: phi, tilt:theta}
+          // console.log("phi",deg(phi0), deg(phi),   deg(phi1));
+          // console.log("the",deg(the0), deg(theta), deg(the1));
+          // console.log("t",t)
+          return {pan: theta, tilt:phi}
       }
       
       let p = this.polarVecs.map(pv => {
@@ -65,11 +70,6 @@ class RectMapper {
       let pos = getLinearVec(xpos0, xpos1, y);
       pos.pan  = lerp(0,Math.PI, 0, 180, pos.pan);
       pos.tilt = lerp(0,Math.PI, 0, 180, pos.tilt);
-      // pos.pan  *= pos.tilt < 0 ? -1 : 1;
-      // pos.pan  += p[0].pan >= Math.PI ? 180 : 0;
-      // pos.tilt *= pos.tilt < 0 ? -1 : 1;
-      // if(pos.pan < 0) pos.pan = 90 - pos.pan;
-      // if(pos.tilt < 0) pos.tilt = - pos.tilt;
       return pos;
   }
   setSrcRect(x, y) {
