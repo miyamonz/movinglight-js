@@ -30,8 +30,12 @@ class App {
     }
     load() {
         this.stopAll();
-        this.sceneList.load(); 
-        console.log("loaded");
+        try {
+            this.sceneList.load(); 
+            console.log("loaded");
+        }catch(e){
+            console.log(e);
+        }
     }
     watch() {
         console.log("start watching scene folder")

@@ -4,9 +4,8 @@ let RectMapper = require('../app/homography/RectMapper.js');
 
 const fs   = require('fs')
 const path = require('path')
-function lerp(x0,x1, y0,y1, x) {
-    return y0 + (y1-y0) * (x-x0) / (x1-x0);
-}
+const lerp = require('./lerp.js')
+
 class InnoPocket {
     constructor(addr, client) {
         this.startAddr  = addr;
@@ -14,8 +13,10 @@ class InnoPocket {
         this._pan   = 0; //0~540
         this._tilt  = 0; //0~180
 
-        this.color = 0;
-        this.dimmer = 0;
+        this._color = 0;
+        this._dimmer = 0;
+        this._gobo = 0;
+        this._isShake = false;
 
         this.isReady = false;
 
@@ -30,12 +31,11 @@ class InnoPocket {
         this.isReady = true;
     }
 
-    get pan()     { return this._pan; }
-    set pan(val)  { this._pan = val; }
-    get tilt()    { return this._tilt; }
-    set tilt(val) { this._tilt = val; }
+    // get pan()     { return this._pan; }
+    // get tilt()    { return this._tilt; }
 
     sendDmx(offset, val, callback) {
+        if(callback === undefined) callback = (t) => {};
         this.client.send("/dmx/" + (this.startAddr + offset), val, callback);
     }
     sendPanTilt(name, val, _callback) {
@@ -72,38 +72,97 @@ class InnoPocket {
             this.dmxTilt = [ch1, ch2];
         }
     }
-    sendPan(val, callback){
+
+    sendPan(val, callback) {
+        console.log("depracted. use this.pan(arg, callback)");
+        this.pan(val,callback);
+    }
+    pan(val, callback){
         this.sendPanTilt("pan", val, callback);
     }
     sendTilt(val, callback) {
+        console.log("depracted. use this.tilt(arg, callback)");
+        this.tilt(val,callback);
+    }
+    tilt(val, callback) {
         this.sendPanTilt("tilt", val, callback);
     }
+
     sendOn(bool) {
-        let val = bool ? 255 : 0;
-        this.sendStrobe(val);
+        console.log("depracted. use this.light(bool)");
+        this.light(bool);
     }
-    sendStrobe(val, callback) {
-        // val 15..132 118段階 
+    light(bool) {
+        let val = bool ? 255 : 0;
+        this.strobe(val);
+        this.dimmer(255);
+    }
+
+    //strobe
+    sendStrobe(val) {
+        console.log("depracted. use this.strobe(arg)");
+        this.strobe(val);
+    }
+    strobe(val) {
+        //val float
+        // dmx 15..132 118段階 
+        // 0 117
         // 15はclose 132はopen
         let dmx = 0;
+        // let dmx = val * 117 + 15;
         if(val <= 0) dmx = 0;
         if(0 < val && val <= 117) dmx = val + 15; 
         if(117 < val)             dmx = 255; 
-        let sendStrobe = (callback) => this.sendDmx(6, dmx, () => callback() );
-        async.series([sendStrobe], () => {
-            if(callback !== undefined) callback();
-        })
+        this.sendDmx(6, dmx);
     }
-    sendDimmer(val, callback) {
+
+    //dimmer
+    sendDimmer(arg) {
+        console.log("depracted. use this.dimmer(arg)");
+        this.dimmer(arg);
+    }
+    dimmer(val) {
         val = Math.floor(val);
         if(val < 0) val = 0;
         if(val > 255) val = 255;
-        let sendDimmer = (callback) => this.sendDmx(7, val, () => callback() );
-        async.series([sendDimmer], () => {
-            if(callback !== undefined) callback();
-        })
+        this.sendDmx(7, val);
     }
-    sendColor(arg, callback) {
+
+    //gobo
+    gobo(val) {
+        val = (val < 0) ? 0 : (val >= 7) ? 7 : val;
+        val *= 8;
+        val += this._isShake ? 64 : 0;
+        this.sendDmx(5, val);
+    }
+    isShake() {
+        return this._isShake;
+    }
+
+    //black out
+    blackOut(name,bool) {
+        if(name      === "color")   val = bool ?  90 : 100;
+        else if(name === "pantilt") val = bool ?  80 :  90;
+        else if(name === "gobo")    val = bool ? 110 : 120;
+        else if(name === "all")  {
+            this.blackOut("color",   bool);
+            this.blackOut("pantilt", bool);
+            this.blackOut("gobo",    bool);
+            return;
+        }else if(name === "reset") val = 200;
+        else{
+            console.log('this.blackOut(name,bool). name = "color", "gobo","pantilt", "all", "reset" is available');
+            return;
+        }
+        this.sendDmx(9,val);
+    }
+
+    //color
+    sendColor(arg) {
+        console.log("depracted. use this.color(arg)");
+        this.color(arg);
+    }
+    color(arg) {
         let colorString = ["white","red","orange","yellow","green","blue","lightblue","pink"];
         let colorDmx = [ 0,10,20,25,30,40,45,55];
         let dmx;
@@ -117,10 +176,7 @@ class InnoPocket {
                 dmx = colorDmx[index];
             }else dmx = 190; //なにもしない
         }
-        let func = (callback) => this.sendDmx(4, dmx, () => callback() );
-        async.series([func], () => {
-            if(callback !== undefined) callback();
-        })
+        this.sendDmx(4, dmx);
     }
 
     setAsCorner(index){
@@ -133,8 +189,8 @@ class InnoPocket {
         }
         if(!this.rectMapper.isReady()) return false;
         let theta = this.rectMapper.calcDeg(x,y);
-        this.sendPan(theta.pan)
-        this.sendTilt(theta.tilt)
+        this.pan(theta.pan)
+        this.tilt(theta.tilt)
         return [this._pan, this._tilt]
     }
     getJson() {

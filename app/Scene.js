@@ -3,7 +3,7 @@ let async  = require('async');
 
 class Scene {
   constructor() {
-    this.interval = 25;
+    this.interval = 50;
     this.startTime;
     this.sceneLength   = moment.duration(1, "s");
     this.frame       = 0;
