@@ -141,6 +141,7 @@ class InnoPocket {
 
     //black out
     blackOut(name,bool) {
+        let val;
         if(name      === "color")   val = bool ?  90 : 100;
         else if(name === "pantilt") val = bool ?  80 :  90;
         else if(name === "gobo")    val = bool ? 110 : 120;
