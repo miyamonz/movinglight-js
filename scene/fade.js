@@ -12,6 +12,13 @@ let pp = [
     [0,1],
 ];
 let num = floor(t) % 4;
+at(2,() => {
+    inno.forEach((e,i) => {
+        e.gobo(0);
+        e.color(i*2);
+    })
+
+})
 
 inno.forEach( (e,i)=> {
     // e.point(pp[ii%4])

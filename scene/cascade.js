@@ -1,4 +1,4 @@
-this.setLength(1000);
+this.setLength(3000);
 let t = time /1000;
 
 t = time/1000;
@@ -15,15 +15,15 @@ let num = Math.floor(t) % 4;
 at(1, () => {
     inno.forEach( (e,i)=> {
         e.strobe(255);
+        e.dimmer(255);
         if(i==0) e.color("red");
         if(i==1) e.color("green");
         if(i==2) e.color("blue");
-
     });
 });
 
 inno.forEach( (e,i)=> {
-    let theta = 0.6*t + 2*i/3 ;
+    let theta = 0.6*t + 2*i/3;
     let sayu = Math.floor(theta) % 2==0 ? 1:-1;
     x = 0.5-sayu*0.25;
     y = 0.5;

@@ -1,3 +1,4 @@
+this.setLength(10000)
 let t = time /1000;
 
 t = time/1000;
@@ -36,6 +37,7 @@ if(this.frame%h == 0) {
             // e.color(0);
             e.dimmer(0)
         }
-        e.color(i)
+        e.color((ii+i)%8);
+        // e.gobo((ii+i)%8)
     } )
 }

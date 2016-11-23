@@ -1,4 +1,4 @@
-this.setLength(100);
+this.setLength(10000);
 let pos = [];
 pos[0] = [[98,44],[36,34],[100,6],[37,6]];
 pos[1] = [[132,39],[56,44],[134,6],[58,6]];
@@ -13,6 +13,7 @@ at(119, () => {
             // ii.tilt(tilt);
             // ii.setAsCorner(kaku);
             // ii.saveJson();
+            ii.gobo(0)
         })
 })
 let t = time /1000;
@@ -44,7 +45,7 @@ if(this.frame%h == 0) {
         // e.point(pp[ii%4])
 
         if(ii%3==i) {
-            e.strobe(86);
+            e.strobe(102);
             let x = Math.random();
             let y = Math.random();
             e.point(x,y);
@@ -52,7 +53,7 @@ if(this.frame%h == 0) {
             e.dimmer(255)
         }
         else{
-            e.strobe(124);
+            e.strobe(166);
             e.color(0);
             e.dimmer(54)
         }
