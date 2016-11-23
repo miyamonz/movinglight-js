@@ -63,15 +63,11 @@ describe('InnoPocket', function() {
         assert(!inno.point(0,0));
     })
     it('pan, tilt', function() {
-        inno.sendPan(100);
-        assert.equal(100, inno.pan);
-        inno.sendTilt(10);
-        assert.equal(10, inno.tilt);
     })
     it('rectMapper', function() {
         pt.forEach((p,i)=> {
-            inno.sendPan(p[0]);
-            inno.sendTilt(p[1]);
+            inno.pan(p[0]);
+            inno.tilt(p[1]);
             inno.setAsCorner(i);
         })
         inno.point(0,0);
