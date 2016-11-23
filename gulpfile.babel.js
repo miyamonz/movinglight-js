@@ -10,7 +10,7 @@ gulp.task('test', () => {
 })
 
 gulp.task("watch", () => {
-    gulp.watch( ["./test/**/*","./app/**/*", "./util/**/*"], ["test"])
+    gulp.watch( ["./fixture/**/*","./test/**/*","./app/**/*", "./util/**/*"], ["test"])
 })
 
 gulp.task("default", () =>
